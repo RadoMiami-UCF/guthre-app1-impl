@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dialogboxes.AddItemDialogBox">
+   <children>
+      <ChoiceBox fx:id="listChoiceBox" layoutX="170.0" layoutY="30.0" prefWidth="180.0" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="List to add item to:" x="50.0" y="47.0" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of item:" x="50.0" y="87.0" />
+      <TextField fx:id="descriptionOfNewItem" layoutX="170.0" layoutY="70.0" prefWidth="180.0" />
+      <Button fx:id="createItemButton" layoutX="230.0" layoutY="230.0" mnemonicParsing="false" onMouseClicked="#createItem" prefWidth="100.0" text="Create Item" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Due date of item:" x="50.0" y="127.0" />
+      <DatePicker fx:id="dueDateOfNewItem" layoutX="170.0" layoutY="110.0" prefWidth="180.0" />
+      <Button fx:id="cancelButton" layoutX="70.0" layoutY="230.0" mnemonicParsing="false" onMouseClicked="#closeDialogBox" prefWidth="100.0" text="Cancel" />
+   </children>
+</AnchorPane>

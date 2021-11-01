@@ -1,0 +1,86 @@
+@startuml
+TodoList o-- ListItem
+Application o-- TodoList
+Application o-- FXMLController
+FXMLController o-- AddItemDialogBox
+FXMLController o-- DeleteItemDialogBox
+FXMLController o-- SaveDialogBox
+
+class SaveDialogBox {
+-File file
+-Button cancelButton
+-Button chooseFileButton
+-TextField filePathDisplay
+-Button saveListsButton
+-TodoList todoList
++void setTodoList(TodoList todoList)
+~void chooseFile()
+~void closeDialogBox()
+~void saveListsToFile()
+}
+
+class DeleteItemDialogBox {
+-TodoList todoList
+-Button cancelButton
+-ChoiceBox<?> itemChoiceBox
+-ChoiceBox<?> listChoiceBox
+-Button removeItemButton
++void setTodoList(TodoList todoList)
+~void closeDialogBox()
+~void removeItem()
+}
+
+class AddItemDialogBox {
+-TodoList todoList
+-Button cancelButton
+-Button createItemButton
+-TextField descriptionOfNewItem
+-DatePicker dueDateOfNewItem
+-ChoiceBox<?> listChoiceBox
++void setTodoList(TodoList todoList)
+~void closeDialogBox()
+~void createItem(MouseEvent event)
+}
+
+class FXMLController {
+-{static} final String STYLES_CSS_URI_STRING
+-TodoList todoList
+-MenuItem addItemButton
+-MenuItem deleteItemButton
+-MenuItem loadButton
+-MenuItem saveButton
++void setTodoListGroup(TodoListGroup todoListGroup)
+~void openAddItemDialogBox()
+~void openDeleteItemDialogBox()
+~void openLoadDialogBox()
+~void openSaveDialogBox()
+}
+
+class Application {
++TodoListGroup listGroup
++void start(Stage stage)
+}
+
+note right of TodoList : The reason why the methods in ListItem are package\nprotected and repeated is that while the items and\nthe information they hold are private, they still need\nto be accessed somehow. They're accessed\nthrough the TodoList that stores them and\nonly that TodoList, and ListItems aren't subclasses \nof TodoLists, and thus the relevant methods can only \nbe package protected, and nothing more secure.
+
+note right of ListItem : Furthermore, any repeated methods are \ncalled from the TodoList, then passed into \nthe ListItem for processing.
+
+class TodoList {
+-ArrayList<ListItem> listOfItems
+~void addItem()
+~void removeItem(int index)
+~void setDescriptionForItem(int itemIndex, String description)
+~void setDueDateForItem(int itemIndex, Calendar dueDate)
+~String getDescriptionOfItem(int itemIndex)
+~Calendar getDueDateOfItem(int itemIndex)
+}
+
+class ListItem {
+-String description
+-Calendar dueDate
+~void setDescription(String description)
+~void setDueDate(Calendar dueDate)
+~String getDescriptionOfItem()
+~Calendar getDueDateOfItem()
+}
+@enduml
