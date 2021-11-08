@@ -1,86 +1,82 @@
 @startuml
-TodoList o-- ListItem
-Application o-- TodoList
 Application o-- FXMLController
+FXMLController o-- ListItem
 FXMLController o-- AddItemDialogBox
+AddItemDialogBox o-- ListItem
 FXMLController o-- DeleteItemDialogBox
+DeleteItemDialogBox o-- ListItem
 FXMLController o-- SaveDialogBox
+SaveDialogBox o-- ListItem
+FXMLController o-- DatePickerTableCell
 
 class SaveDialogBox {
+-ObservableList<ListItem> observableTodoList
 -File file
 -Button cancelButton
--Button chooseFileButton
 -TextField filePathDisplay
--Button saveListsButton
--TodoList todoList
-+void setTodoList(TodoList todoList)
-~void chooseFile()
-~void closeDialogBox()
-~void saveListsToFile()
++void setTodoList(List<ListItem> todoList)
+-void chooseFile()
+-void closeDialogBox()
+-void saveListsToFile()
 }
 
 class DeleteItemDialogBox {
--TodoList todoList
+-ObservableList<ListItem> observableTodoList
+-TableView<ListItem> listTable
 -Button cancelButton
--ChoiceBox<?> itemChoiceBox
--ChoiceBox<?> listChoiceBox
--Button removeItemButton
-+void setTodoList(TodoList todoList)
-~void closeDialogBox()
-~void removeItem()
+-ComboBox<ListItem> itemChoiceBox
++void setUpDialogBox(List<ListItem> todoList, TableView<ListItem> listTable)
+-void closeDialogBox()
+-void removeItem()
 }
 
 class AddItemDialogBox {
--TodoList todoList
+-ObservableList<ListItem> observableTodoList
+-TableView<ListItem> listTable
 -Button cancelButton
--Button createItemButton
--TextField descriptionOfNewItem
--DatePicker dueDateOfNewItem
--ChoiceBox<?> listChoiceBox
-+void setTodoList(TodoList todoList)
-~void closeDialogBox()
-~void createItem(MouseEvent event)
+-TextField descriptionField
+-DatePicker datePicker
++void setUpDialogBox(List<ListItem> todoList, TableView<ListItem> listTable)
++void initialize()
+-void closeDialogBox()
+-void createItem()
 }
 
 class FXMLController {
 -{static} final String STYLES_CSS_URI_STRING
--TodoList todoList
--MenuItem addItemButton
--MenuItem deleteItemButton
--MenuItem loadButton
--MenuItem saveButton
-+void setTodoListGroup(TodoListGroup todoListGroup)
+-final ObservableList<ListItem> observableTodoList
+-TableColumn<ListItem, String> descriptionCol
+-TableColumn<ListItem, LocalDate> dueDateCol
+-TableView<ListItem> listTable
++void initialize()
 ~void openAddItemDialogBox()
 ~void openDeleteItemDialogBox()
 ~void openLoadDialogBox()
 ~void openSaveDialogBox()
+-void overwriteListTable(ObjectInputStream o)
 }
 
 class Application {
-+TodoListGroup listGroup
 +void start(Stage stage)
 }
 
-note right of TodoList : The reason why the methods in ListItem are package\nprotected and repeated is that while the items and\nthe information they hold are private, they still need\nto be accessed somehow. They're accessed\nthrough the TodoList that stores them and\nonly that TodoList, and ListItems aren't subclasses \nof TodoLists, and thus the relevant methods can only \nbe package protected, and nothing more secure.
-
-note right of ListItem : Furthermore, any repeated methods are \ncalled from the TodoList, then passed into \nthe ListItem for processing.
-
-class TodoList {
--ArrayList<ListItem> listOfItems
-~void addItem()
-~void removeItem(int index)
-~void setDescriptionForItem(int itemIndex, String description)
-~void setDueDateForItem(int itemIndex, Calendar dueDate)
-~String getDescriptionOfItem(int itemIndex)
-~Calendar getDueDateOfItem(int itemIndex)
+class ListItem {
+-{static} final long serialVersionUID = 1
+-{static} final transient int MAX_DESC_LENGTH = 256
+-String description
+-LocalDate dueDate
++void setDescription(String description)
++void setDueDate(Calendar dueDate)
++String getDescriptionOfItem()
++Calendar getDueDateOfItem()
++String toString()
 }
 
-class ListItem {
--String description
--Calendar dueDate
-~void setDescription(String description)
-~void setDueDate(Calendar dueDate)
-~String getDescriptionOfItem()
-~Calendar getDueDateOfItem()
+class DatePickerTableCell {
+-DatePicker datePicker
+-final ObservableList<ListItem> observableTodoList
++void updateItem(LocalDate item, boolean empty)
++void createDatePicker()
++void cancelEdit()
 }
 @enduml

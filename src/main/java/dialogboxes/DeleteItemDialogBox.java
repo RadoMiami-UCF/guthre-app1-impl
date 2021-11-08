@@ -4,43 +4,51 @@
  */
 package dialogboxes;
 
-import baseline.TodoList;
+import baseline.ListItem;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
-public class DeleteItemDialogBox {
+import java.util.List;
 
-    private TodoList todoList;
+public class DeleteItemDialogBox {
+    private ObservableList<ListItem> observableTodoList;
+
+    private TableView<ListItem> listTable;
 
     @FXML
     private Button cancelButton;
 
     @FXML
-    private ChoiceBox<?> itemChoiceBox;
+    private ComboBox<ListItem> itemChoiceBox;
 
-    @FXML
-    private ChoiceBox<?> listChoiceBox;
-
-    @FXML
-    private Button removeItemButton;
-
-    public void setTodoList(TodoList todoList) {
-        this.todoList = todoList;
+    public void setUpDialogBox(List<ListItem> todoList, TableView<ListItem> listTable) {
+        this.observableTodoList = (ObservableList<ListItem>) todoList;
+        itemChoiceBox.getItems().addAll(observableTodoList);
+        this.listTable = listTable;
     }
 
     @FXML
-    void closeDialogBox() {
+    private void closeDialogBox() {
         //Simply close the dialog box.
         var stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
     @FXML
-    void removeItem() {
-        //First, check to see if both an item and list has been chosen.
-        //If that's the case, call TodoListGroup.deleteItemFromList(listIndex, itemIndex).
+    private void removeItem() {
+        //First, check to see if an item has been chosen.
+        if(itemChoiceBox.getSelectionModel().getSelectedItem() != null) {
+            //If that's the case, call observableTodoList.deleteItemFromList(itemIndex).
+            observableTodoList.remove(itemChoiceBox.getSelectionModel().getSelectedIndex());
+            //Then, refresh the listTable to make sure that it displays properly when the dialog box closes.
+            listTable.refresh();
+            //Then, close the dialog box.
+            closeDialogBox();
+        }
     }
 }
 

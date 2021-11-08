@@ -9,15 +9,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Application extends javafx.application.Application {
+import java.util.ArrayList;
 
-    private final TodoList todoList = new TodoList();
+public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws Exception {
         var loader = new FXMLLoader(getClass().getResource("mainScene.fxml"));
         Parent root = loader.load();
-        ((FXMLController) loader.getController()).setTodoList(todoList);
 
         var scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());

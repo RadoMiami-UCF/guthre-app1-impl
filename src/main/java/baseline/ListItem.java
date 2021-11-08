@@ -6,33 +6,66 @@ package baseline;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.LocalDate;
 
-class ListItem implements Serializable {
+public class ListItem implements Serializable {
     @Serial
     private static final long serialVersionUID = 1;
+
+    private static final transient int MAX_DESC_LENGTH = 256;
+
     private String description;
-    private Calendar dueDate;
+    /*This time-based field is half of the reason the class exists, it can't be transient or dueDates would be lost on
+    save.*/
+    private LocalDate dueDate;
 
-    ListItem(String description, Calendar dueDate) {
-        /*Set this.description to description (which should be non-null), and this.dueDate to dueDate (if applicable).*/
+    public ListItem(String description, LocalDate dueDate) {
+        /*Set this.description to description (which should be non-null), and this.dueDate to dueDate (which should be
+        non-null). If description is larger than 256 characters, cut it down to 256 characters.*/
+        if(description.length() <= MAX_DESC_LENGTH) {
+            this.description = description;
+        } else {
+            this.description = description.substring(0, MAX_DESC_LENGTH);
+        }
+        this.dueDate = dueDate;
     }
 
-    void setDescription(String description) {
-        //If description isn't empty, change this.description to description.
+    public ListItem(String description) {
+        //If no dueDate is specified, set dueDate to null.
+        this.description = description;
+        this.dueDate = null;
     }
 
-    void setDueDate(Calendar dueDate) {
+    public void setDescription(String description) {
+        //If description isn't empty, and is less than 256 characters, change this.description to description.
+        if(description.length() > 0) {
+            if(description.length() <= MAX_DESC_LENGTH) {
+                this.description = description;
+            } else {
+                /*If description isn't empty, but larger than 256 characters, change this.description to the first 256
+                characters of description.*/
+                this.description = description.substring(0, MAX_DESC_LENGTH);
+            }
+        }
+    }
+
+    public void setDueDate(LocalDate dueDate) {
         //Changes this.dueDate to dueDate.
+        this.dueDate = dueDate;
     }
 
-    String getDescription() {
+    public String getDescription() {
         //Returns description.
-        return "";
+        return description;
     }
 
-    Calendar getDueDate() {
+    public LocalDate getDueDate() {
         //Returns dueDate.
-        return new Calendar.Builder().setDate(1, 1, 1).build();
+        return dueDate;
+    }
+
+    public String toString() {
+        //Returns the description, used to more easily format the choiceBox in DeleteItemDialogBox.
+        return getDescription();
     }
 }

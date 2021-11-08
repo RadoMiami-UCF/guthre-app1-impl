@@ -4,7 +4,8 @@
  */
 package dialogboxes;
 
-import baseline.TodoList;
+import baseline.ListItem;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,45 +13,70 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SaveDialogBox {
+    private ObservableList<ListItem> observableTodoList;
+
     private File file;
 
     @FXML
     private Button cancelButton;
 
     @FXML
-    private Button chooseFileButton;
-
-    @FXML
     private TextField filePathDisplay;
 
-    @FXML
-    private Button saveListButton;
-
-    private TodoList todoList;
-
-    public void setTodoList(TodoList todoList) {
-        this.todoList = todoList;
+    public void setTodoList(List<ListItem> todoList) {
+        this.observableTodoList = (ObservableList<ListItem>) todoList;
     }
 
     @FXML
-    void chooseFile() {
+    private void chooseFile() {
         //Load the correct file into file through a fileChooser.
-        //Then, load the string representation of that file into filePathDisplay for display.
+        var chooser = new FileChooser();
+        chooser.setTitle("Save to..");
+        file = chooser.showOpenDialog(new Stage());
+        //Then, if it isn't null, load the string representation of that file into filePathDisplay for display.
+        if (file != null) {
+            filePathDisplay.setText(file.getAbsolutePath());
+        } else {
+            filePathDisplay.setText(null);
+        }
     }
 
     @FXML
-    void closeDialogBox() {
+    private void closeDialogBox() {
         //Simply close the dialog box.
         var stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
     @FXML
-    void saveListToFile() {
+    private void saveListToFile() {
         //Check if file is not null.
-        //If file is not null, then save all the items there.
-        //Finally, close the dialog box.
+        if (file != null) {
+            //If file is not null, then try to save all the items in there after trying to create the file.
+            try (var f = new FileOutputStream(file); var o = new ObjectOutputStream(f)) {
+                o.writeObject(new ArrayList<>(observableTodoList));
+
+            } catch (FileNotFoundException e) {
+                var logger = Logger.getLogger("FileNotFoundLogger");
+                logger.log(Level.WARNING, "File could not be created or opened, or is a directory!", e);
+
+            } catch (IOException e) {
+                var logger = Logger.getLogger("IOExceptionLogger");
+                logger.log(Level.SEVERE, "Unforeseen IO error!", e);
+
+            }
+            //Finally, close the dialog box.
+            closeDialogBox();
+        }
     }
 }
