@@ -7,8 +7,7 @@ package baseline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDate;
 
 public class ListItem implements Serializable {
@@ -22,7 +21,7 @@ public class ListItem implements Serializable {
     save.*/
     private LocalDate dueDate;
 
-    private final BooleanProperty complete = new SimpleBooleanProperty();
+    private transient BooleanProperty complete = new SimpleBooleanProperty();
 
     public ListItem(String description, LocalDate dueDate) {
         /*Set this.description to description (which should be non-null), and this.dueDate to dueDate (which should be
@@ -79,5 +78,19 @@ public class ListItem implements Serializable {
 
     public BooleanProperty completeProperty() {
         return complete;
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.defaultWriteObject();
+        s.writeBoolean(complete.getValue());
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        complete = new SimpleBooleanProperty();
+        complete.setValue(s.readBoolean());
+        // set values in the same order as writeObject()
     }
 }

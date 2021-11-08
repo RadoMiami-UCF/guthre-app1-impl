@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public class FXMLController {
     private static final String STYLES_CSS_URI_STRING = "styles.css";
 
-    private final ObservableList<ListItem> observableTodoList = FXCollections.observableArrayList(new ArrayList<>());
+    public final ObservableList<ListItem> observableTodoList = FXCollections.observableArrayList(new ArrayList<>());
 
     @FXML
     private TableColumn<ListItem, String> descriptionCol;
@@ -200,13 +200,13 @@ public class FXMLController {
     }
 
     @FXML
-    private void deleteAllItems() {
+    public void deleteAllItems() {
         //Simply empty observableTodoList and refresh the table.
         observableTodoList.clear();
         listTable.refresh();
     }
 
-    private void overwriteListTable(ObjectInputStream o) throws IOException, ClassNotFoundException, ClassCastException{
+    public void overwriteListTable(ObjectInputStream o) throws IOException, ClassNotFoundException, ClassCastException{
         var inPossiblyList = o.readObject();
         List<ListItem> result = new ArrayList<>();
         if (inPossiblyList instanceof List<?> listOfMaybeListItem) {
