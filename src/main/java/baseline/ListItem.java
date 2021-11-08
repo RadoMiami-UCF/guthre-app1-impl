@@ -4,13 +4,16 @@
  */
 package baseline;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 public class ListItem implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 2;
 
     private static final transient int MAX_DESC_LENGTH = 256;
 
@@ -18,6 +21,8 @@ public class ListItem implements Serializable {
     /*This time-based field is half of the reason the class exists, it can't be transient or dueDates would be lost on
     save.*/
     private LocalDate dueDate;
+
+    private final BooleanProperty complete = new SimpleBooleanProperty();
 
     public ListItem(String description, LocalDate dueDate) {
         /*Set this.description to description (which should be non-null), and this.dueDate to dueDate (which should be
@@ -28,12 +33,7 @@ public class ListItem implements Serializable {
             this.description = description.substring(0, MAX_DESC_LENGTH);
         }
         this.dueDate = dueDate;
-    }
-
-    public ListItem(String description) {
-        //If no dueDate is specified, set dueDate to null.
-        this.description = description;
-        this.dueDate = null;
+        complete.setValue(false);
     }
 
     public void setDescription(String description) {
@@ -67,5 +67,17 @@ public class ListItem implements Serializable {
     public String toString() {
         //Returns the description, used to more easily format the choiceBox in DeleteItemDialogBox.
         return getDescription();
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete.setValue(complete);
+    }
+
+    public boolean getComplete() {
+        return complete.getValue();
+    }
+
+    public BooleanProperty completeProperty() {
+        return complete;
     }
 }

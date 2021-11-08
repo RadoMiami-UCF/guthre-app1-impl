@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="480.0" minWidth="640.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
    <children>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="480.0" minWidth="640.0" styleClass="root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" minWidth="640.0" prefHeight="25.0" styleClass="root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="480.0" minWidth="640.0" styleClass="root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <menus>
@@ -21,12 +23,14 @@
                 </Menu>
                   <Menu mnemonicParsing="false" text="Edit">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openDeleteItemDialogBox" text="Delete Item" />
                         <MenuItem mnemonicParsing="false" onAction="#openAddItemDialogBox" text="Add Item" />
+                        <MenuItem mnemonicParsing="false" onAction="#openDeleteItemDialogBox" text="Delete Item" />
+                        <MenuItem mnemonicParsing="false" onAction="#deleteAllItems" text="Delete List" />
                      </items>
                   </Menu>
               </menus>
             </MenuBar>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Completion Filter:" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="4.0" />
          </children>
       </AnchorPane>
       <TableView fx:id="listTable" editable="true" prefHeight="200.0" prefWidth="200.0" styleClass="table" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
@@ -34,9 +38,11 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
          <columns>
-            <TableColumn fx:id="descriptionCol" prefWidth="130.0" styleClass="descriptionCol" text="Description" />
+            <TableColumn fx:id="descriptionCol" prefWidth="130.0" sortable="false" styleClass="descriptionCol" text="Description" />
             <TableColumn fx:id="dueDateCol" prefWidth="130.0" text="Due Date" />
+            <TableColumn fx:id="completeCol" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" sortable="false" text="Complete?" />
          </columns>
       </TableView>
+      <ChoiceBox fx:id="completionFilterBox" prefWidth="100.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

@@ -9,12 +9,13 @@ import dialogboxes.DeleteItemDialogBox;
 import dialogboxes.SaveDialogBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
@@ -44,10 +45,17 @@ public class FXMLController {
     private TableColumn<ListItem, LocalDate> dueDateCol;
 
     @FXML
+    private TableColumn<ListItem, Boolean> completeCol;
+
+    @FXML
     private TableView<ListItem> listTable;
 
     @FXML
+    private ChoiceBox<String> completionFilterBox;
+
+    @FXML
     public void initialize() {
+        var filteredList = new FilteredList<>(observableTodoList);
         //The table is set to be editable.
         listTable.setEditable(true);
         /*The description column is set to use the default cell factory for TextFieldTableCells and the property factory
@@ -65,16 +73,28 @@ public class FXMLController {
                     //Then, refresh the table to make sure it stays consistent with the array list.
                     listTable.refresh();
                 });
-
+        completionFilterBox.setItems(FXCollections.observableArrayList(List.of("True Only", "False Only", "Either")));
+        completionFilterBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                filteredList.setPredicate(listItem -> switch (newValue) {
+                    //If the filter text is "True Only", return the listItem's boolean.
+                    case "True Only" -> listItem.getComplete();
+                    //If the filter text is "False Only", return the inverse of the listItem's boolean.
+                    case "False Only" -> !listItem.getComplete();
+                    //If filter text is "Either", return true.
+                    default -> true;
+                }));
         //The due date column is set to use the property factory of "dueDate".
         dueDateCol.setCellFactory(p -> new DatePickerTableCell(observableTodoList));
         dueDateCol.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+
+        completeCol.setCellValueFactory( new PropertyValueFactory<>("complete"));
+        completeCol.setCellFactory(tc -> new CheckBoxTableCell<>());
         //Finally, make the list table show the items in observableTodoList.
-        listTable.setItems(observableTodoList);
+        listTable.setItems(filteredList);
     }
 
     @FXML
-    void openAddItemDialogBox() throws IOException {
+    private void openAddItemDialogBox() throws IOException {
         /*Open a dialog box containing a drop-down of valid lists, and fields for a non-null description and due date,
         a button to create the item, and another to cancel the creation.*/
         var dialogStage = new Stage();
@@ -98,7 +118,7 @@ public class FXMLController {
     }
 
     @FXML
-    void openDeleteItemDialogBox() throws IOException {
+    private void openDeleteItemDialogBox() throws IOException {
         /*Open a dialog box containing two drop-downs: one to select the list the item is in, and another for the item
         to delete, in addition to two buttons: one to cancel the deletion, and another to confirm it.*/
         var dialogStage = new Stage();
@@ -122,7 +142,7 @@ public class FXMLController {
     }
 
     @FXML
-    void openLoadDialogBox() {
+    private void openLoadDialogBox() {
         //First, open a fileChooser.
         var chooser = new FileChooser();
         chooser.setTitle("Load from...");
@@ -155,7 +175,7 @@ public class FXMLController {
     }
 
     @FXML
-    void openSaveDialogBox() throws IOException {
+    private void openSaveDialogBox() throws IOException {
         /*Open a dialog box containing a button to choose a file through a fileChooser, a list of all the lists in the
         form of a vbox with a checkbox next to each to indicate whether to include them in the save, and finally two
         lone buttons: one to cancel the save, and one to confirm it.*/
@@ -177,6 +197,13 @@ public class FXMLController {
         dialogStage.setTitle("Save Lists");
         dialogStage.setScene(dialogScene);
         dialogStage.show();
+    }
+
+    @FXML
+    private void deleteAllItems() {
+        //Simply empty observableTodoList and refresh the table.
+        observableTodoList.clear();
+        listTable.refresh();
     }
 
     private void overwriteListTable(ObjectInputStream o) throws IOException, ClassNotFoundException, ClassCastException{
